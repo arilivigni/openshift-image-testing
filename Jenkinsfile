@@ -1,6 +1,7 @@
 #!/usr/bin/groovy
 
 @Library('github.com/fabric8io/fabric8-pipeline-library@master')
+//go back to the master repository
 def canaryVersion = "1.0.${env.BUILD_NUMBER}"
 def utils = new io.fabric8.Utils()
 def stashName = "buildpod.${env.JOB_NAME}.${env.BUILD_NUMBER}".replace('-', '_').replace('/', '_')
