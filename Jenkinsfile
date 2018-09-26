@@ -37,14 +37,18 @@ mavenNode {
     }
 
     echo 'NOTE: running pipelines for the first time will take longer as build and base docker images are pulled onto the node'
-    container(name: 'maven') {
-      stage('Build Release') {
-        mavenCanaryRelease {
-          version = canaryVersion
-        }
+    container(name: 'maven', shell: '/bin/bash') {
+      //stage('Build Release') {
+      //  mavenCanaryRelease {
+       //   version = canaryVersion
+       // }
         //stash deployment manifests
-        stash includes: '**/*.yml', name: stashName
-      }
+        //stash includes: '**/*.yml', name: stashName
+      //}
+      sh '''
+       env
+       ls
+      '''
     }
   }
 }
