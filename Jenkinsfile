@@ -38,20 +38,47 @@ mavenNode {
 
     echo 'NOTE: running pipelines for the first time will take longer as build and base docker images are pulled onto the node'
     container(name: 'maven', shell: '/bin/bash') {
-      //stage('Build Release') {
-      //  mavenCanaryRelease {
-       //   version = canaryVersion
-       // }
-        //stash deployment manifests
-        //stash includes: '**/*.yml', name: stashName
-      //}
-      stage('Explore and set git in container')
-      sh '''
-       env
-       git version
-       git config --global user.name arilivigni
-       git config --global user.email arilivigni@gmail.com
-      '''
+      stage('Build Release') {
+        sh '''
+            git config --global user.name arilivigni
+            git config --global user.email arilivigni@gmail.com
+        '''
+        mavenCanaryRelease {
+        version = canaryVersion
+      }
+        stash deployment manifests
+        stash includes: '**/*.yml', name: stashName
+      }
+    }
+  }
+}
+
+if (utils.isCD()) {
+  node {
+    stage('Rollout to Stage') {
+      unstash stashName
+      setupScript?.setupEnvironmentPre(envStage)
+      apply {
+        environment = envStage
+      }
+      setupScript?.setupEnvironmentPost(envStage)
+    }
+
+    stage('Approve') {
+      approve {
+        room = null
+        version = canaryVersion
+        environment = 'Stage'
+      }
+    }
+
+    stage('Rollout to Run') {
+      unstash stashName
+      setupScript?.setupEnvironmentPre(envProd)
+      apply {
+        environment = envProd
+      }
+      setupScript?.setupEnvironmentPost(envProd)
     }
   }
 }
