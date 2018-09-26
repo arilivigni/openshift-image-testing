@@ -49,7 +49,8 @@ mavenNode {
       sh '''
        env
        git version
-       git -c user.name=arilivigni -c user.email=arilivigni@gmail.com
+       git config --global user.name arilivigni
+       git config --global user.email arilivigni@gmail.com
       '''
     }
   }
