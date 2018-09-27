@@ -42,7 +42,6 @@ mavenNode {
         sh '''
             git config --global user.name arilivigni
             git config --global user.email arilivigni@gmail.com
-            yum update git
         '''
         mavenCanaryRelease {
         version = canaryVersion
